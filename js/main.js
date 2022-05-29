@@ -15,16 +15,18 @@
     --------------------*/
 
     var form = document.getElementById('my-search-model-form')
-
-    form.addEventListener('submit', function(event){
-        event.preventDefault()
-
-        var search = document.getElementById('search-input').value
-
-        console.log(search)
-
-        document.location.href = "./search-results.html";
-    })
+    
+    if (form) {
+        form.addEventListener('submit', function(event){
+            event.preventDefault()
+    
+            var search = document.getElementById('search-input').value
+    
+            console.log(search)
+    
+            document.location.href = "./search-results.html";
+        })
+    }
 
 
     /*------------------
