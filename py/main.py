@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 cred = credentials.Certificate("hallowed-welder-297014-042131c68dd6.json")
 firebase_admin.initialize_app(cred)
@@ -9,6 +10,7 @@ db = firestore.client()
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
