@@ -98,6 +98,46 @@
         })
     }
 
+    /*------------------
+        my_anime-search-list
+    --------------------*/
+
+    function createAnimeSearchList(id, name, image_link, score, rank, members) {
+        var elem = `<div class="col-lg-4 col-md-6 col-sm-6">` +
+                    `<div class="product__item">` +
+                        `<div class="product__item__pic set-bg" data-setbg="${image_link}" style="background-image: url('${image_link}');">` +
+                            `<div class="ep">${score} / 10</div>` +
+                            `<div class="comment"><i class="fa fa-star"></i> ${Math.trunc(rank)}</div>` +
+                            `<div class="view"><i class="fa fa-eye"></i> ${members}</div>` +
+                        `</div>` +
+                        `<div class="product__item__text">` +
+                            `<ul>` +
+                                `<li>Active</li>` +
+                                `<li>Movie</li>` +
+                            `</ul>` +
+                            `<h5><a href="./anime-info-page.html?id=${id}">${name}</a></h5>` +
+                        `</div>` +
+                    `</div>` +
+                `</div>`;
+
+        return elem;
+    }
+
+    $( document ).ready(function() {
+        if ($('#anime-search-list').length) {
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:8080/animes",
+                success: function (result) {
+                    var anime_list = result;
+                    for (var i = 0; i < 21; i++) {
+                        $('#anime-search-list').append(createAnimeSearchList(i, result[i]["title"], result[i]["img_url"], result[i]["score"], result[i]["ranked"], result[i]["members"]));
+                      }
+                },
+                dataType: "json"
+                });
+        }
+    });
 
     /*------------------
         Preloader
