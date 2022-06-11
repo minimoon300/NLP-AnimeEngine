@@ -13,18 +13,83 @@
     /*------------------
         my_algorithm
     --------------------*/
-
+    
     var form = document.getElementById('my-search-model-form')
     
     if (form) {
         form.addEventListener('submit', function(event){
             event.preventDefault()
-    
+            
             var search = document.getElementById('search-input').value
-    
+            
             console.log(search)
-    
+            
             document.location.href = "./search-results.html";
+        })
+    }
+    
+    /*------------------
+        my_login_and_register
+    --------------------*/
+
+    var form = document.getElementById('register-form')
+    
+    if (form) {
+        form.addEventListener('submit', function(event){
+            event.preventDefault()
+            
+            var email = document.getElementById('email-input').value
+            var name = document.getElementById('name-input').value
+            var password = document.getElementById('password-input').value
+
+            $.ajax({
+                type: "POST",
+                url: "http://127.0.0.1:8080/users",
+                data: `{
+                    "email": email,
+                    "username": name,
+                    "password": password,
+                }`,
+                success: function (result) {
+                    console.log(result);
+                },
+                dataType: "json"
+                });
+            
+            console.log(email)
+            console.log(name)
+            console.log(password)
+            
+            document.location.href = "./index.html";
+        })
+    }
+
+    var form = document.getElementById('login-form')
+    
+    if (form) {
+        form.addEventListener('submit', function(event){
+            event.preventDefault()
+            
+            var email = document.getElementById('email-input').value
+            var name = document.getElementById('password-input').value                  
+            
+            $.ajax({
+                type: "POST",
+                url: "http://127.0.0.1:8080/login",
+                data: `{
+                    "email": email,
+                    "password": password,
+                }`,
+                success: function (result) {
+                    console.log(result);
+                },
+                dataType: "json"
+                });
+
+            console.log(email)
+            console.log(name)
+            
+            document.location.href = "./index.html";
         })
     }
 
