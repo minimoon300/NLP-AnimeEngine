@@ -27,5 +27,16 @@ def add_user_to_firestore():
     return jsonify(doc_ref.get().to_dict())
 
 
+@app.route('/animes', methods=['GET'])
+def get_all_animes():
+    all_animes_raw = db.collection(u'animengineDB').stream()
+    all_animes = []
+
+    for anime in all_animes_raw:
+        all_animes.append({k: v for k, v in anime.to_dict().items() if v})
+
+    return jsonify(all_animes)
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
