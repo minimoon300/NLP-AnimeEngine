@@ -16,6 +16,23 @@ def index():
      return "AnimEngine root"
 
 
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.json["email"]
+    password = request.json["password"]
+    all_users_raw = db.collection(u'AnimEngine').stream()
+    all_users = []
+
+    for user in all_users_raw:
+        all_users.append({k: v for k, v in user.to_dict().items() if v})
+
+    for user in all_users:
+        if user["email"] == email and user["password"] == password:
+            return jsonify(user)
+
+    return "User not found", 404
+
+
 @app.route('/users', methods=['POST'])
 def add_user_to_firestore():
     doc_ref = db.collection(u'AnimEngine').document()
