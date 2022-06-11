@@ -44,21 +44,23 @@
 
             $.ajax({
                 type: "POST",
+                method: "POST",
                 url: "http://127.0.0.1:8080/users",
-                data: `{
-                    "email": email,
-                    "username": name,
-                    "password": password,
-                }`,
+                crossDomain: true,
+                headers: {
+                    "content-type": "application/json",
+                },
+                data: JSON.stringify({ email : email , username : name, password : password}),
                 success: function (result) {
                     console.log(result);
                 },
+                processData: false,
                 dataType: "json"
                 });
             
-            console.log(email)
+            /* console.log(email)
             console.log(name)
-            console.log(password)
+            console.log(password) */
             
             document.location.href = "./index.html";
         })
@@ -71,23 +73,26 @@
             event.preventDefault()
             
             var email = document.getElementById('email-input').value
-            var name = document.getElementById('password-input').value                  
+            var password = document.getElementById('password-input').value                  
             
             $.ajax({
                 type: "POST",
+                method: "POST",
                 url: "http://127.0.0.1:8080/login",
-                data: `{
-                    "email": email,
-                    "password": password,
-                }`,
+                crossDomain: true,
+                headers: {
+                    "content-type": "application/json",
+                },
+                data: JSON.stringify({ email : email, password : password}),
                 success: function (result) {
                     console.log(result);
                 },
+                processData: false,
                 dataType: "json"
                 });
 
-            console.log(email)
-            console.log(name)
+            /* console.log(email)
+            console.log(password) */
             
             document.location.href = "./index.html";
         })
