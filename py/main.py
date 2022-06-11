@@ -18,6 +18,20 @@ def index():
      return "AnimEngine root"
 
 
+@app.route("/animeinfo", methods=["GET"])
+def animeinfo():
+    anime_id = request.args.get("id")
+    all_animes_raw = db.collection(u'animengineDB').stream()
+    all_animes = []
+
+    for anime in all_animes_raw:
+        all_animes.append({k: v for k, v in anime.to_dict().items() if v})
+
+    for anime in all_animes:
+        if anime["id"] == anime_id:
+            return jsonify(anime)
+
+
 @app.route("/login", methods=["POST"])
 def login():
     email = request.json["email"]
