@@ -24,7 +24,7 @@
             
             console.log(search)
             
-            document.location.href = "./search-results.html";
+            document.location.href = `./search-results.html?query="${search}"`;
         })
     }
     
@@ -173,11 +173,21 @@
 
     $( document ).ready(function() {
         if (getURL().pathname.split("/").pop(-1) == "search-results.html") {
+            $('#anime-search-list').append(`<div class="loader"></div>`)
+
+            console.log(getURLParam().get("query"))
             $.ajax({
                 type: "GET",
-                url: "http://127.0.0.1:8080/animes",
+                url: "http://127.0.0.1:8080/algo",
+                data: { 
+                    "query": getURLParam().get("query"),
+                },
                 success: function (result) {
-                    for (var i = 0; i < 21; i++) {
+                    $("div").remove(".loader")
+                    if (result.length == 0) {
+                        $('#anime-search-list').append(`<div style="color:white;">NO RESULTS FOUND</div>`)
+                    }
+                    for (var i = 0; i < result.length; i++) {
                         $('#anime-search-list').append(createAnimeSearchList(result[i]["id"], result[i]["title"], result[i]["img_url"], result[i]["score"], result[i]["ranked"], result[i]["members"]));
                       }
                 },

@@ -178,7 +178,6 @@ def algorithm():
             if anime['title'] == result['title']:
                 newAnimeList.append(anime.copy())
                 break
-    print(newAnimeList)
     return jsonify(newAnimeList)
 
 
