@@ -20,16 +20,13 @@ def index():
 
 @app.route("/animeinfo", methods=["GET"])
 def animeinfo():
-    anime_id = request.args.get("id")
-    all_animes_raw = db.collection(u'animengineDB').stream()
-    all_animes = []
+    doc_ref = db.collection(u'animengineDB').document(request.args.get("id"))
+    doc = doc_ref.get()
 
-    for anime in all_animes_raw:
-        all_animes.append({k: v for k, v in anime.to_dict().items() if v})
-
-    for anime in all_animes:
-        if anime["id"] == anime_id:
-            return jsonify(anime)
+    if doc.exists:
+        return jsonify(doc.to_dict())
+    else:
+        return "Anime not found", 404
 
 
 @app.route("/login", methods=["POST"])
