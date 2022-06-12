@@ -79,6 +79,40 @@ def login():
             return jsonify(user)
 
     return "User not found", 404
+
+
+@app.route("/algo", methods=["GET"])
+def algorithm():
+    all_animes_raw = db.collection(u'animengineDB').stream()
+    all_animes = []
+
+    for anime in all_animes_raw:
+        all_animes.append({k: v for k, v in anime.to_dict().items() if v})
+    keywordsList = []
+    query = request.args.get("query")
+    queryList = query.split(' ')
+    for word in queryList:
+        print(word)
+        if word not in stopwords and len(keywordsList) < 3:
+            keywordsList.append(word)
+    indexModel = False
+    vectorSpaceModel = True
+    print(keywordsList)
+    #keywordsList = ["samurai", "gun", " "]
+    queryVector = []
+    indexOfKeywordList = []
+    for elem in keywordsList:
+        index = 0
+        for key in keywordsList:
+            if elem == key:
+                index += 1
+        if elem not in indexOfKeywordList:
+            queryVector.append(index)
+            indexOfKeywordList.append(elem)
+    verificationList = [0, 0, 0]
+    keywordsParsingLists = []
+    for elem in keywordsList:
+        keywordsParsingLists.append([])
     fileID = 1
     i = 0
     resultDictList = [{
@@ -145,7 +179,8 @@ def login():
                 newAnimeList.append(anime.copy())
                 break
     print(newAnimeList)
-    return(newAnimeList)
+    return jsonify(newAnimeList)
+
 
 @app.route('/users', methods=['POST'])
 def add_user_to_firestore():
