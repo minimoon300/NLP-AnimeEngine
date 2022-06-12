@@ -97,7 +97,7 @@ def algorithm():
             keywordsList.append(word.replace('"', ""))
     indexModel = False
     vectorSpaceModel = True
-    print(keywordsList)
+    # print(keywordsList)
     if len(keywordsList) < 3:
         indexModel = True
         vectorSpaceModel = False
@@ -162,7 +162,7 @@ def algorithm():
                 if anime['title'] == result['title']:
                     newAnimeList.append(anime.copy())
                     break
-    print(newAnimeList)
+    # print(newAnimeList)
     return jsonify(newAnimeList)
 
 
