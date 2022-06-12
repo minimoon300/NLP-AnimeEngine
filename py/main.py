@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 import math
 
 from collections import Counter
@@ -92,12 +93,14 @@ def algorithm():
     query = request.args.get("query")
     queryList = query.split(' ')
     for word in queryList:
-        print(word)
         if word not in stopwords and len(keywordsList) < 3:
-            keywordsList.append(word)
+            keywordsList.append(word.replace('"', ""))
     indexModel = False
     vectorSpaceModel = True
     print(keywordsList)
+    if len(keywordsList) < 3:
+        indexModel = True
+        vectorSpaceModel = False
     #keywordsList = ["samurai", "gun", " "]
     queryVector = []
     indexOfKeywordList = []
@@ -114,7 +117,6 @@ def algorithm():
     for elem in keywordsList:
         keywordsParsingLists.append([])
     fileID = 1
-    i = 0
     resultDictList = [{
         "title" : "",
         "result" : 0
@@ -124,19 +126,14 @@ def algorithm():
     for anime in all_animes:
         if 'synopsis' in anime:
             if (indexModel):
-                for line in anime['synopsis']:
-                    for keyword in range(0, len(keywordsList)):
-                        if ' ' + keywordsList[keyword].lower() + ' ' in line.lower() and verificationList[keyword] == 0:
-                            keywordsParsingLists[keyword].append(fileID)
-                            verificationList[keyword] = 1
-                    if sum(verificationList) == len(verificationList):
-                        break
-                i += 1
-                fileID += 1
-                for i in range(0, len(verificationList)):
-                    verificationList[i] = 0
-                # print(verificationList)
-                # print("file done")
+                result = 0
+                tmpString = anime['synopsis'].split(' ')
+                for keyword in range(0, len(indexOfKeywordList)):
+                    for word in tmpString:
+                        if indexOfKeywordList[keyword].lower() == word.lower():
+                            result+=1
+                if result >= 1:
+                    resultDictList.append({'title': anime['title'], 'result': result})
             if (vectorSpaceModel):
                 tmpString = anime['synopsis'].split(' ')
                 for keyword in range(0, len(indexOfKeywordList)):
@@ -145,39 +142,27 @@ def algorithm():
                     for word in tmpString:
                         if indexOfKeywordList[keyword].lower() == word.lower():
                             tmpVector[keyword] += 1
-                # print(tmpVector)
+                # (tmpVector)
                 # print(queryVector)
                 # print(indexOfKeywordList)
                 if (sum(tmpVector) != 0):
                     result = (tmpVector[0] * queryVector[0] + tmpVector[1] * queryVector[1] + tmpVector[2] * queryVector[2]) / (math.sqrt(math.pow(tmpVector[0], 2) + math.pow(tmpVector[1], 2) + math.pow(tmpVector[2],2)) * math.sqrt(math.pow(queryVector[0], 2) + math.pow(queryVector[1], 2) + math.pow(queryVector[2],2)))
                     if result > 0.5:
-                        if 'title' in anime:
-                            print(anime['title'])
-                        print(result)
                         resultDictList.append({'title': anime['title'], 'result': result})
                 tmpVector = [0, 0, 0]
-                i += 1
 
-    if indexModel:
-        j = 0
-        tmpList = keywordsParsingLists[0]
-        while j < len(keywordsParsingLists):
-            if (j + 1) < len(keywordsParsingLists):
-                tmpList = list(set(tmpList).intersection(keywordsParsingLists[j + 1]))
-            j += 1
-        print(tmpList)
-    print(indexOfKeywordList)
     # print(keywordsParsingLists)
     # do your stuff
     newlist = sorted(resultDictList, key=lambda d: d['result'])
     newlist.reverse()
-    print(newlist)
     newAnimeList = []
     for result in newlist:
-        for anime in all_animes:
-            if anime['title'] == result['title']:
-                newAnimeList.append(anime.copy())
-                break
+        if len(newAnimeList) < 15:
+            for anime in all_animes:
+                if anime['title'] == result['title']:
+                    newAnimeList.append(anime.copy())
+                    break
+    print(newAnimeList)
     return jsonify(newAnimeList)
 
 
